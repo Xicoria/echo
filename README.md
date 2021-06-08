@@ -4,6 +4,7 @@
 ## Description
 
 This repository contains an example how to implement full CI/CD pipeline, from containerising an application to its deployment to a Kubernetes cluster. The goal is to show how it can be done in a simplistic way and not to pose as a guide.
+Application is exposed on nodeport 32000 and Jenkins on 31000.
 
 ## Usage
 
@@ -107,6 +108,12 @@ After saving, it will trigger a Scan Repository process that will automatically 
 
 ###### Repositories on Docker Hub are created as Private, you will need to change it to public if you want Kubernetes pod to fetch your image.
 ###### If you want to use your own images, there are two places where they are hardcoded. ./kubernetes/app/manifest.yaml and ./kubernetes/jk/manifest.yaml.
+
+##### Verify application is running:
+
+```sh
+minikube service -n echo echo-server
+```
 
 ## Enhancements
 
