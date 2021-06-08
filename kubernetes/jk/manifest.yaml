@@ -1,0 +1,59 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: jenkins
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+  namespace: jenkins
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+      - name: jenkins
+        image: xicoria/jk-k8s
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: jenkins-home
+          mountPath: /var/jenkins_home
+        - name: docker-socket-volume
+          mountPath: /var/run/docker.sock
+        securityContext:
+          privileged: true
+      volumes:
+      - name:  jenkins-home
+        emptyDir: {}
+      - name: docker-socket-volume
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+  labels:
+    app: jenkins
+  namespace: jenkins
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    protocol: TCP
+    nodePort: 31000
+  selector:
+    app: jenkins

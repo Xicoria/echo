@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-server
+  namespace: echo
+spec:
+  selector:
+    matchLabels:
+      app: echo-server
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: echo-server
+    spec:
+      containers:
+      - name: echo-server
+        image: $DOCKER_IMAGE_NAME:$GIT_SHORT_COMMIT
+        ports:
+        - containerPort: 3000
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-server
+  labels:
+    app: echo-server
+  namespace: echo
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    protocol: TCP
+    nodePort: 32000
+  selector:
+    app: echo-server
